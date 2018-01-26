@@ -1763,7 +1763,7 @@ int Server::on_read() {
     assert(handler_it != std::end(handlers_));
   }
 
-  auto h = (*handler_it).second.get();
+  auto h = (*handler_it).second.get();//h指向handler
   if (ngtcp2_conn_in_closing_period(h->conn())) {
     // TODO do exponential backoff.
     rv = h->send_conn_close();
@@ -1895,7 +1895,8 @@ int Server::send_packet(Address &remote_addr, Buffer &buf) {
 
   do {
     nwrite = sendto(fd_, buf.rpos(), buf.size(), 0, &remote_addr.su.sa,
-                    remote_addr.len);
+                    remote_addr.len);//server在这里将buf中文件发给client
+                    				 //是否可以在这里直接将buf中的文件发给client的不同地址？
   } while ((nwrite == -1) && (errno == EINTR) && (eintr_retries-- > 0));
 
   if (nwrite == -1) {
