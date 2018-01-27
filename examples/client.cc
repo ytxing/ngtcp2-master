@@ -828,7 +828,7 @@ int Client::on_read() {
 
   for (;;) {
     auto nread =
-        recvfrom(fd_, buf.data(), buf.size(), MSG_DONTWAIT, nullptr, nullptr);
+        recvfrom(fd_, buf.data(), buf.size(), MSG_DONTWAIT, nullptr, nullptr);//增加sock 整合数据包
 
     if (nread == -1) {
       if (errno != EAGAIN && errno != EWOULDBLOCK) {
@@ -844,7 +844,7 @@ int Client::on_read() {
       break;
     }
 
-    if (feed_data(buf.data(), nread) != 0) {
+    if (feed_data(buf.data(), nread) != 0) {//这里仿佛可以加入一个排序 为什么原来好像没有处理乱序包的能力？
       return -1;
     }
   }
@@ -1167,7 +1167,7 @@ int Client::send_packet() {
   ssize_t nwrite = 0;
 
   do {
-    nwrite = send(fd_, sendbuf_.rpos(), sendbuf_.size(), 0);
+    nwrite = send(fd_, sendbuf_.rpos(), sendbuf_.size(), 0);//这里客户端发送的包不需要做特殊处理
   } while ((nwrite == -1) && (errno == EINTR) && (eintr_retries-- > 0));
 
   if (nwrite == -1) {
@@ -1193,9 +1193,12 @@ int Client::start_interactive_input() {
 
   std::cerr << "Interactive session started.  Hit Ctrl-D to end the session."
             << std::endl;
-
+  //加入debug信息，观察libev的工作状况。
+  std::cout << "ev_io_set and ev_io_start are about to run" <<std::endl;//debug
   ev_io_set(&stdinrev_, datafd_, EV_READ);
   ev_io_start(loop_, &stdinrev_);
+  std::cout << "ev_io_set and ev_io_start are finished" <<std::endl;//debug
+
 
   uint64_t stream_id;
 
