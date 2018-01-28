@@ -2203,6 +2203,7 @@ int create_sock(const char *addr, const char *port, int family) {
 
 namespace {
 int serve(Server &s, const char *addr, const char *port, int family) {
+  std::cout << "YTXING: server() is active" << std:endl;
   auto fd = create_sock(addr, port, family);
   if (fd == -1) {
     return -1;
@@ -2405,6 +2406,7 @@ int main(int argc, char **argv) {
 
   auto ready = false;
 
+  std::cout << "YTXING: creating server" <<std::endl;
   Server s4(EV_DEFAULT, ssl_ctx);
   if (!util::numeric_host(addr, AF_INET6)) {
     if (serve(s4, addr, port, AF_INET) == 0) {

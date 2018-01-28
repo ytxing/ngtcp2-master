@@ -505,7 +505,7 @@ ssize_t do_decrypt(ngtcp2_conn *conn, uint8_t *dest, size_t destlen,
 } // namespace
 
 int Client::init(int fd, const Address &remote_addr, const char *addr,
-                 int datafd, uint32_t version) {
+                 int datafd, uint32_t version) {//YTXING：要在这里面加多一个sock还是在外面直接加啊QAQ
   int rv;
 
   remote_addr_ = remote_addr;
@@ -1629,6 +1629,7 @@ SSL_CTX *create_ssl_ctx() {
 
 namespace {
 int create_sock(Address &remote_addr, const char *addr, const char *port) {
+  std::cout << "YTXING: creat_sock() is active" << std:endl;
   addrinfo hints{};
   addrinfo *res, *rp;
   int rv;
@@ -1636,7 +1637,7 @@ int create_sock(Address &remote_addr, const char *addr, const char *port) {
   hints.ai_family = AF_UNSPEC;
   hints.ai_socktype = SOCK_DGRAM;
 
-  rv = getaddrinfo(addr, port, &hints, &res);
+  rv = getaddrinfo(addr, port, &hints, &res);//函数通过result指针参数返回一个指向addrinfo结构体链表的指针
   if (rv != 0) {
     std::cerr << "getaddrinfo: " << gai_strerror(rv) << std::endl;
     return -1;
@@ -1645,8 +1646,9 @@ int create_sock(Address &remote_addr, const char *addr, const char *port) {
   auto res_d = defer(freeaddrinfo, res);
 
   int fd = -1;
-
+  int count = 0;//YTXING debug 这个addrinfo结构体链表中有几个对象？
   for (rp = res; rp; rp = rp->ai_next) {
+  	count++;
     fd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
     if (fd == -1) {
       continue;
@@ -1661,6 +1663,7 @@ int create_sock(Address &remote_addr, const char *addr, const char *port) {
   next:
     close(fd);
   }
+  std::cout << "YTXING: creat_sock() count the num of res: " << count << std::endl;//YTXING debug
 
   if (!rp) {
     std::cerr << "Could not connect" << std::endl;
@@ -1683,6 +1686,7 @@ int create_sock(Address &remote_addr, const char *addr, const char *port) {
 
 namespace {
 int run(Client &c, const char *addr, const char *port) {
+  std::cout << "YTXING: run() is active" << std::endl;
   Address remote_addr;
 
   auto fd = create_sock(remote_addr, addr, port);
