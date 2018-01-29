@@ -2205,6 +2205,7 @@ namespace {
 int serve(Server &s, const char *addr, const char *port, int family) {
   std::cout << "YTXING: server() is active" << std::endl;
   auto fd = create_sock(addr, port, family);
+  auto fd2 = create_sock("192.168.56.3", "4432", family);//YTXING
   if (fd == -1) {
     return -1;
   }
