@@ -2203,7 +2203,7 @@ int create_sock(const char *addr, const char *port, int family) {
 
 namespace {
 int serve(Server &s, const char *addr, const char *port, int family) {
-  std::cout << "YTXING: server() is active" << std:endl;
+  std::cout << "YTXING: server() is active" << std::endl;
   auto fd = create_sock(addr, port, family);
   if (fd == -1) {
     return -1;

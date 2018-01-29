@@ -1629,7 +1629,7 @@ SSL_CTX *create_ssl_ctx() {
 
 namespace {
 int create_sock(Address &remote_addr, const char *addr, const char *port) {
-  std::cout << "YTXING: creat_sock() is active" << std:endl;
+  std::cout << "YTXING: creat_sock() is active" << std::endl;
   addrinfo hints{};
   addrinfo *res, *rp;
   int rv;
