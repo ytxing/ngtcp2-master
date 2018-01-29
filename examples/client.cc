@@ -1645,7 +1645,7 @@ int create_sock(Address &remote_addr, const char *addr, const char *port) {
 
   auto res_d = defer(freeaddrinfo, res);
 
-  int fd = -1;
+  int fd = -1;//存放套接口描述字
   int count = 0;//YTXING debug 这个addrinfo结构体链表中有几个对象？
   for (rp = res; rp; rp = rp->ai_next) {
   	count++;
@@ -1661,7 +1661,7 @@ int create_sock(Address &remote_addr, const char *addr, const char *port) {
     break;
 
   next:
-    close(fd);
+    close(fd);//这个close()应该是网络编程中的
   }
   std::cout << "YTXING: creat_sock() count the num of res: " << count << std::endl;//YTXING debug
 

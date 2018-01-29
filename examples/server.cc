@@ -2142,6 +2142,7 @@ fail:
 
 namespace {
 int create_sock(const char *addr, const char *port, int family) {
+  std::cout << "YTXING: create_sock() is active" <<std::endl;
   addrinfo hints{};
   addrinfo *res, *rp;
   int rv;
@@ -2164,8 +2165,9 @@ int create_sock(const char *addr, const char *port, int family) {
   auto res_d = defer(freeaddrinfo, res);
 
   int fd = -1;
-
+  int count = 0;//YTXING: how many res in addrinfo?
   for (rp = res; rp; rp = rp->ai_next) {
+  	count++;
     fd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
     if (fd == -1) {
       continue;
@@ -2178,7 +2180,8 @@ int create_sock(const char *addr, const char *port, int family) {
         continue;
       }
     }
-
+   std::cout << "the num of res in addrinfo is" << count <<std::endl;//YTXING
+	
     if (bind(fd, rp->ai_addr, rp->ai_addrlen) != -1) {
       break;
     }
@@ -2205,8 +2208,14 @@ namespace {
 int serve(Server &s, const char *addr, const char *port, int family) {
   std::cout << "YTXING: server() is active" << std::endl;
   auto fd = create_sock(addr, port, family);
-  auto fd2 = create_sock("192.168.56.3", "4432", family);//YTXING
+  auto fd2 = create_sock("192.168.56.3", "4432", family);//YTXING fd描述字是Server类的成员
+  														 //这里fd2不交给Server管理，由程序员手动管理试试
   if (fd == -1) {
+    return -1;
+  }
+
+  if (fd2 == -1) {
+  	std::cout << "YTXING: fail to creat the new sock" << std::endl;
     return -1;
   }
 
